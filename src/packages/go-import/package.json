@@ -1,0 +1,13 @@
+{
+  "name": "@licensly/go-import",
+  "version": "0.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {},
+  "keywords": [],
+  "author": "Alejandro Mery <amery@jpi.io>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.15.11"
+  }
+}

@@ -17,6 +17,12 @@ importers:
         specifier: 2.7.1
         version: 2.7.1
 
+  src/packages/go-import:
+    devDependencies:
+      '@types/node':
+        specifier: ^18.15.11
+        version: 18.15.11
+
 packages:
 
   /@cloudflare/kv-asset-handler@0.2.0:
