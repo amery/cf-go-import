@@ -2,7 +2,7 @@ lockfileVersion: '6.0'
 
 importers:
 
-  src/apps/cf-proxy:
+  src/apps/cf-go-import:
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20230321.0
