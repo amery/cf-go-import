@@ -1,13 +1,23 @@
 export interface GoImport {
-	package: string;
+	readonly host: string;
+	readonly path: string;
+
+	importPath(): string;
 }
 
 export function URLAsGoImport(url: string): GoImport | null {
-	const { hostname, pathname, searchParams: qs } = new URL(url);
+	const { hostname: host, pathname: path, searchParams: qs } = new URL(url);
 	if (qs.get("go-get") === "1") {
-		const pkg = `${hostname}${pathname}`;
 		return {
-			package: pkg.endsWith("/") ? pkg.slice(0, -1) : pkg,
+			host,
+			path: path.replace(/\/+$/, ""),
+
+			importPath() {
+				if (this.path) {
+					return this.host + this.path;
+				}
+				return this.host;
+			},
 		};
 	}
 	return null;

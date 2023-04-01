@@ -27,7 +27,7 @@ async function goGetHandler(
 	ctx: ExecutionContext
 ): Promise<Response> {
 	console.log(pkg);
-	return new Response(`go get ${pkg.package}`);
+	return new Response(`go get ${pkg.importPath()}`);
 }
 
 async function requestHandler(
