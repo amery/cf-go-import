@@ -19,11 +19,25 @@ export interface Env {
 	// MY_BUCKET: R2Bucket;
 }
 
+async function goGetHandler(
+	request: Request,
+	env: Env,
+	ctx: ExecutionContext
+): Promise<Response> {
+	console.log(request.url)
+	const url = new URL(request.url)
+	return new Response(`go get ${url.host}${url.pathname}`);
+}
+
 async function requestHandler(
 	request: Request,
 	env: Env,
 	ctx: ExecutionContext
 ): Promise<Response> {
+	const { searchParams } = new URL(request.url);
+	if (searchParams.get("go-get") === "1") {
+		return goGetHandler(request, env, ctx)
+	}
 	return new Response("Hello World!");
 }
 
