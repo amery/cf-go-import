@@ -7,8 +7,14 @@
   "author": "Alejandro Mery <amery@jpi.io>",
   "license": "MIT",
   "main": "src/index.ts",
-  "scripts": {},
+  "scripts": {
+    "format": "prettier --write \"**/*.{js,ts,json}\"",
+    "lint": "eslint --fix --ext ts,js ."
+  },
   "devDependencies": {
-    "@types/node": "^18.15.11"
+    "@types/node": "^18.15.11",
+    "eslint": "^8.37.0",
+    "eslint-config-custom": "workspace:^",
+    "prettier": "^2.8.7"
   }
 }
