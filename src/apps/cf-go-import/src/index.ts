@@ -8,6 +8,8 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
+import * as go from "@licensly/go-import";
+
 export interface Env {
 	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
 	// MY_KV_NAMESPACE: KVNamespace;
@@ -20,13 +22,12 @@ export interface Env {
 }
 
 async function goGetHandler(
-	request: Request,
+	pkg: go.GoImport,
 	env: Env,
 	ctx: ExecutionContext
 ): Promise<Response> {
-	console.log(request.url)
-	const url = new URL(request.url)
-	return new Response(`go get ${url.host}${url.pathname}`);
+	console.log(pkg);
+	return new Response(`go get ${pkg.package}`);
 }
 
 async function requestHandler(
@@ -34,9 +35,9 @@ async function requestHandler(
 	env: Env,
 	ctx: ExecutionContext
 ): Promise<Response> {
-	const { searchParams } = new URL(request.url);
-	if (searchParams.get("go-get") === "1") {
-		return goGetHandler(request, env, ctx)
+	const pkg = go.URLAsGoImport(request.url);
+	if (pkg) {
+		return goGetHandler(pkg, env, ctx);
 	}
 	return new Response("Hello World!");
 }
