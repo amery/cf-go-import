@@ -19,12 +19,16 @@ export interface Env {
 	// MY_BUCKET: R2Bucket;
 }
 
-export default {
-	async fetch(
-		request: Request,
-		env: Env,
-		ctx: ExecutionContext
-	): Promise<Response> {
-		return new Response("Hello World!");
-	},
+async function requestHandler(
+	request: Request,
+	env: Env,
+	ctx: ExecutionContext
+): Promise<Response> {
+	return new Response("Hello World!");
+}
+
+const worker: ExportedHandler<Env> = {
+	fetch: requestHandler,
 };
+
+export default worker;
