@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "format": "prettier --write \"**/*.{js,ts,json}\"",
-    "lint": "eslint --fix --ext ts,js",
+    "lint": "eslint --fix --ext ts,js .",
     "start": "wrangler dev",
     "deploy": "wrangler publish",
     "test": "vitest"
