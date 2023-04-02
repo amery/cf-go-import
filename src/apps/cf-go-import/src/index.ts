@@ -84,28 +84,46 @@ async function goGetResponse(
 	);
 }
 
-async function goGetHandler(pkg: go.GoImport, env: Env): Promise<Response> {
-	// TODO: handle pagination
-	const roots = await env.NAMESPACE.get(pkg.host);
-	if (roots) {
-		for (const row of roots.split("\n")) {
-			const root = parseRepoRootRow(pkg.host, row);
+async function redirectResponse(pkg: go.GoImport): Promise<Response> {
+	const path = pkg.importPath();
+	const docs = `https://pkg.go.dev/${path}`;
 
-			if (root && pkg.matchPath(root.path)) {
-				return goGetResponse(pkg, root.root);
-			}
-		}
-	}
-
-	return new Response("Not Found", {
-		status: 404,
+	return new Response(`redirecting to ${docs}`, {
+		status: 302,
+		headers: {
+			["Location"]: docs,
+		},
 	});
 }
 
 async function requestHandler(request: Request, env: Env): Promise<Response> {
-	const pkg = go.URLAsGoImport(request.url);
-	if (pkg) {
-		return goGetHandler(pkg, env);
+	const {
+		hostname: host,
+		pathname: path,
+		searchParams: qs,
+	} = new URL(request.url);
+	const roots = await env.NAMESPACE.get(host);
+	if (roots) {
+		const pkg = go.NewGoImport(host, path);
+
+		for (const row of roots.split("\n")) {
+			const root = parseRepoRootRow(pkg.host, row);
+
+			if (root && pkg.matchPath(root.path)) {
+				if (qs.get("go-get") === "1") {
+					return goGetResponse(pkg, root.root);
+				} else {
+					return redirectResponse(pkg);
+				}
+			}
+		}
+
+		// not found, pass to origin
+	} else if (qs.get("go-get") === "1") {
+		// not supported domain
+		return new Response("Not Found", {
+			status: 404,
+		});
 	}
 
 	// pass through
