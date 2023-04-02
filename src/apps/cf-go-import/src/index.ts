@@ -21,25 +21,22 @@ export interface Env {
 	// MY_BUCKET: R2Bucket;
 }
 
-async function goGetHandler(
-	pkg: go.GoImport,
-	env: Env,
-	ctx: ExecutionContext
-): Promise<Response> {
-	console.log(pkg);
-	return new Response(`go get ${pkg.importPath()}`);
+async function goGetHandler(pkg: go.GoImport, env: Env): Promise<Response> {
+	return new Response("Not Found", {
+		status: 404,
+	});
 }
 
-async function requestHandler(
-	request: Request,
-	env: Env,
-	ctx: ExecutionContext
-): Promise<Response> {
-	const pkg = go.URLAsGoImport(request.url);
-	if (pkg) {
-		return goGetHandler(pkg, env, ctx);
+async function requestHandler(request: Request, env: Env): Promise<Response> {
+	if (request.method === "GET") {
+		const pkg = go.URLAsGoImport(request.url);
+		if (pkg) {
+			return goGetHandler(pkg, env);
+		}
 	}
-	return new Response("Hello World!");
+
+	// pass through
+	return fetch(request)
 }
 
 const worker: ExportedHandler<Env> = {
