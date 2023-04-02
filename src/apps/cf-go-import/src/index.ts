@@ -63,14 +63,18 @@ async function goGetHandler(pkg: go.GoImport, env: Env): Promise<Response> {
 			const root = parseRepoRootRow(pkg.host, row);
 
 			if (root && pkg.matchPath(root.path)) {
+				const meta = go.MetaTag(root.root);
 				const path = pkg.importPath();
 				const docs = `https://pkg.go.dev/${path}`;
+				const repo = root.root.repo;
 
 				return new Response(`<!DOCTYPE html>
 <head>
+	${meta}
 	<meta http-equiv="refresh" content="5; url=${docs}" />
 </head>
 <body>
+	<pre>git clone <a href="${repo}">${repo}</a></pre>
 	<pre>go get <a href="${path}>${path}</a><pre>
 	<pre>import "<a href="${path}>${path}</a></pre>
 </body>
