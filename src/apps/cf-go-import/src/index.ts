@@ -61,7 +61,21 @@ async function goGetHandler(pkg: go.GoImport, env: Env): Promise<Response> {
 	if (roots) {
 		for (const row of roots.split("\n")) {
 			const root = parseRepoRootRow(pkg.host, row);
-			console.log(root);
+
+			if (root && pkg.matchPath(root.path)) {
+				const path = pkg.importPath();
+				const docs = `https://pkg.go.dev/${path}`;
+
+				return new Response(`<!DOCTYPE html>
+<head>
+	<meta http-equiv="refresh" content="5; url=${docs}" />
+</head>
+<body>
+	<pre>go get <a href="${path}>${path}</a><pre>
+	<pre>import "<a href="${path}>${path}</a></pre>
+</body>
+`);
+			}
 		}
 	}
 
