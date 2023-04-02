@@ -55,6 +55,35 @@ function splitN(
 	return out;
 }
 
+async function goGetResponse(
+	pkg: go.GoImport,
+	root: go.RepoRoot
+): Promise<Response> {
+	const meta = go.MetaTag(root);
+	const path = pkg.importPath();
+	const docs = `https://pkg.go.dev/${path}`;
+	const repo = root.repo;
+
+	return new Response(
+		`<!DOCTYPE html>
+<head>
+	${meta}
+	<meta http-equiv="refresh" content="5; url=${docs}" />
+</head>
+<body>
+	<pre>git clone <a href="${repo}">${repo}</a></pre>
+	<pre>go get <a href="${path}">${path}</a><pre>
+	<pre>import "<a href="${path}">${path}</a></pre>
+</body>
+`,
+		{
+			headers: {
+				["Content-Type"]: "text/html; charset=utf-8",
+			},
+		}
+	);
+}
+
 async function goGetHandler(pkg: go.GoImport, env: Env): Promise<Response> {
 	// TODO: handle pagination
 	const roots = await env.NAMESPACE.get(pkg.host);
@@ -63,22 +92,7 @@ async function goGetHandler(pkg: go.GoImport, env: Env): Promise<Response> {
 			const root = parseRepoRootRow(pkg.host, row);
 
 			if (root && pkg.matchPath(root.path)) {
-				const meta = go.MetaTag(root.root);
-				const path = pkg.importPath();
-				const docs = `https://pkg.go.dev/${path}`;
-				const repo = root.root.repo;
-
-				return new Response(`<!DOCTYPE html>
-<head>
-	${meta}
-	<meta http-equiv="refresh" content="5; url=${docs}" />
-</head>
-<body>
-	<pre>git clone <a href="${repo}">${repo}</a></pre>
-	<pre>go get <a href="${path}>${path}</a><pre>
-	<pre>import "<a href="${path}>${path}</a></pre>
-</body>
-`);
+				return goGetResponse(pkg, root.root);
 			}
 		}
 	}
@@ -89,12 +103,9 @@ async function goGetHandler(pkg: go.GoImport, env: Env): Promise<Response> {
 }
 
 async function requestHandler(request: Request, env: Env): Promise<Response> {
-	if (request.method === "GET") {
-		// TODO: cache
-		const pkg = go.URLAsGoImport(request.url);
-		if (pkg) {
-			return goGetHandler(pkg, env);
-		}
+	const pkg = go.URLAsGoImport(request.url);
+	if (pkg) {
+		return goGetHandler(pkg, env);
 	}
 
 	// pass through
