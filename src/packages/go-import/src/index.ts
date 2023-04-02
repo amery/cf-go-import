@@ -5,6 +5,12 @@ export interface GoImport {
 	importPath(): string;
 }
 
+export interface RepoRoot {
+	vcs: string;
+	repo: string;
+	root: string;
+}
+
 export function URLAsGoImport(url: string): GoImport | null {
 	const { hostname: host, pathname: path, searchParams: qs } = new URL(url);
 	if (qs.get("go-get") === "1") {
@@ -22,5 +28,3 @@ export function URLAsGoImport(url: string): GoImport | null {
 	}
 	return null;
 }
-
-export default {};
