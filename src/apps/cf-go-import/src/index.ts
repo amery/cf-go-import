@@ -59,6 +59,7 @@ async function goGetResponse(
 	pkg: go.GoImport,
 	root: go.RepoRoot
 ): Promise<Response> {
+	const refresh = 5;
 	const meta = go.MetaTag(root);
 	const path = pkg.importPath();
 	const docs = `https://pkg.go.dev/${path}`;
@@ -68,12 +69,12 @@ async function goGetResponse(
 		`<!DOCTYPE html>
 <head>
 	${meta}
-	<meta http-equiv="refresh" content="5; url=${docs}" />
+	<meta http-equiv="refresh" content="${refresh}; url=${docs}" />
 </head>
 <body>
 	<pre>git clone <a href="${repo}">${repo}</a></pre>
 	<pre>go get <a href="${path}">${path}</a><pre>
-	<pre>import "<a href="${path}">${path}</a></pre>
+	<pre>import "<a href="${path}">${path}</a>"</pre>
 </body>
 `,
 		{
