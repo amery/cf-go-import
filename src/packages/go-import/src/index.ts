@@ -36,20 +36,24 @@ export function MatchPath(pkg: GoImport, path: string): boolean {
 export function URLAsGoImport(url: string): GoImport | null {
 	const { hostname: host, pathname: path, searchParams: qs } = new URL(url);
 	if (qs.get("go-get") === "1") {
-		return {
-			host,
-			path: path.replace(/\/+$/, ""),
-
-			importPath() {
-				if (this.path) {
-					return this.host + this.path;
-				}
-				return this.host;
-			},
-			matchPath(path: string): boolean {
-				return MatchPath(this, path);
-			},
-		};
+		return NewGoImport(host, path);
 	}
 	return null;
+}
+
+export function NewGoImport(host: string, path: string): GoImport {
+	return {
+		host,
+		path: path.replace(/\/+$/, ""),
+
+		importPath() {
+			if (this.path) {
+				return this.host + this.path;
+			}
+			return this.host;
+		},
+		matchPath(path: string): boolean {
+			return MatchPath(this, path);
+		},
+	};
 }
