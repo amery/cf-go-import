@@ -11,11 +11,13 @@ BINDING=NAMESPACE
 
 render() {
 	local domain="$1" base="$2"
-	local x=
+	local x= y=
 	shift 2
 
 	for x; do
-		echo "$x:$domain${x:+/$x}::$base${x:+/$x}"
+		y="${x%:*}"
+		x="${x#*:}"
+		echo "$y:$domain${y:+/$y}::$base${x:+/$x}"
 	done
 }
 
