@@ -14,7 +14,7 @@ export interface RepoRoot {
 
 export function MetaTag(root: RepoRoot): string {
 	const content = `${root.root} ${root.vcs ? root.vcs : "git"} ${root.repo}`;
-	return `<meta name="go-import content="${content}" />`;
+	return `<meta name="go-import" content="${content}">`;
 }
 
 export function MatchPath(pkg: GoImport, path: string): boolean {

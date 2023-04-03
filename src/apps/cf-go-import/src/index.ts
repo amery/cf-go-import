@@ -67,15 +67,18 @@ async function goGetResponse(
 
 	return new Response(
 		`<!DOCTYPE html>
+<html>
 <head>
 	${meta}
-	<meta http-equiv="refresh" content="${refresh}; url=${docs}" />
+	<meta http-equiv="refresh" content="${refresh}; url=${docs}">
+	<title>go get ${path}</title>
 </head>
 <body>
 	<pre>git clone <a href="${repo}">${repo}</a></pre>
-	<pre>go get <a href="${path}">${path}</a><pre>
+	<pre>go get <a href="${path}">${path}</a></pre>
 	<pre>import "<a href="${path}">${path}</a>"</pre>
 </body>
+</html>
 `,
 		{
 			headers: {
